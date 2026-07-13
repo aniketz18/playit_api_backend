@@ -1,0 +1,20 @@
+{
+  "name": "playit_api_backend",
+  "version": "1.0.0",
+  "description": "the backend for playit app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "backend",
+    "playit"
+  ],
+  "author": "aniket zade",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.2.1",
+    "mongoose": "^9.7.4",
+    "nodemon": "^3.1.14"
+  }
+}

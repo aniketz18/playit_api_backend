@@ -1,18 +1,16 @@
- 
 // promices use approach
-const asyncHandler = (requestHandler) => {(req, res , next) =>{
-    Promise.resolve(requestHandler(req, res, next)).catch((err) =>{
-        next(err)
-    })
-}}
+const asyncHandler = (requestHandler) => {
+  return (req, res, next) => {
+    Promise.resolve(requestHandler(req, res, next)).catch((err) => {
+      next(err);
+    });
+  };
+};
 
+export { asyncHandler };
 
-
-
-
-
- // async approach
- /* const asyncHandler = (fn) => async (req, res , next)=>{
+// async approach
+/* const asyncHandler = (fn) => async (req, res , next)=>{
     try {
         await fn(req , res , next);
     } catch (error) {

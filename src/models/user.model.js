@@ -52,7 +52,7 @@ const userSchema = new Schema(
 );
 
 // encrypt password
-Schema.pre("save", async function (next) {
+userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
     return next();
   }

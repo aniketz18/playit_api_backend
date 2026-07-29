@@ -53,12 +53,16 @@ const userSchema = new Schema(
 
 // encrypt password
 userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) {
+  try {
+    if (!this.isModified("password")) {
     return next();
   }
 
-  this.password = await brypt.hash(this.password, 10);
-  next();
+  this.password = await bcrypt.hash(this.password, 10);
+  // next(); /// here is error..because mongoose v8 no need of 'next()'
+  } catch (error) {
+    next(error);
+  }
 });
 
 // compare a password

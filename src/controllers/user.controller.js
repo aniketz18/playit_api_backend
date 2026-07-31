@@ -61,4 +61,32 @@ const registerUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, createdUser, "User Registered Successfully"));
 });
 
+// login user :
+//1 . user body data --->
+//2. validate data
+//3. check is user is found
+// 4. check credential is correct (password )
+// 5. set access , refresh tokens via cookies
+// 6. generate success login response
+const loginUser = asyncHandler(async (req, res) => {
+  const { email, username, password } = req.body;
+
+  if (!email || !username || !password) {
+    throw new ApiError(400, "all fileds are required , invalid data ");
+  }
+
+  const user = await User.findOne({
+    $or: [{ username }, { email }],
+  });
+
+  if (!user) {
+    throw new ApiError(404, "user does not exists");
+  }
+  const isPasswordValid = await user.isPasswordCorrect(password);
+  if(!isPasswordValid){
+    throw new ApiError(401 , "invalid credentials")
+  }
+  
+});
+
 export { registerUser };

@@ -3,6 +3,22 @@ import { ApiError } from "../utils/apiErrors.js";
 import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/apiResponse.js";
+import { generateAccessTokenAndRefreshToken } from "../utils/generateAccessAndRefreshToken.js";
+
+/* // method to set acces and refresh tokens   ------> migrated to utils
+const generateAccessTokenAndRefreshToken = async(userId)=>
+{
+  try {
+  const user =  await User.findById({userId});
+  const accessToken = user.generateAccessToken();
+  const refreshToken = user.generateRefreshToken();
+  user.refreshToken = refreshToken;
+  await user.save({validateBeforeSave : false}); // no need of validation before save here
+  return { accessToken, refreshToken}
+  } catch (error) {
+    throw new ApiError(500, "something went wrong during setting access and refresh tokens")
+  }
+} */
 
 const registerUser = asyncHandler(async (req, res) => {
   // get all body data
@@ -83,10 +99,34 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new ApiError(404, "user does not exists");
   }
   const isPasswordValid = await user.isPasswordCorrect(password);
-  if(!isPasswordValid){
-    throw new ApiError(401 , "invalid credentials")
+  if (!isPasswordValid) {
+    throw new ApiError(401, "invalid credentials");
   }
-  
+  const { accessToken, refreshToken } =
+    await generateAccessTokenAndRefreshToken(user._id);
+  const loggedInUser = await User.findById(user._id).select(
+    "-password -refreshToken"
+  );
+
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
+  return res
+    .status(200)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
+    .json(
+      new ApiResponse(
+        200,
+        {
+          user: loggedInUser,
+          accessToken,
+          refreshToken,
+        },
+        "User Logged In Succesfully "
+      )
+    );
 });
 
-export { registerUser };
+export { registerUser, loginUser };

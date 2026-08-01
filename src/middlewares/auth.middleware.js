@@ -1,6 +1,6 @@
-import { User } from "../models/user.model";
-import { ApiError } from "../utils/apiErrors";
-import { asyncHandler } from "../utils/asyncHandler";
+import { User } from "../models/user.model.js";
+import { ApiError } from "../utils/apiErrors.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
 import jwt from "jsonwebtoken";
 // 1. check is cookies is added
 // 2, if yes then check is valid
